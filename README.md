@@ -17,7 +17,7 @@ Find out all available features on [settings props](https://github.com/codeeshop
 
 ## Live Demo
 
-[Live Demo](https://codeeshop-oc.github.io/vue-full-autocomplete/).
+[Live Demo](https://codeeshop-oc.github.io/vue-full-autocomplete/)
 
 ## 🚚 Installation
 
