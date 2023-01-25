@@ -52,6 +52,7 @@ jobs:
         gh repo set-default codeeshop-oc/vue-full-autocomplete
         gh pr create --base main --head dist-files --title "Update Build Files" --body "Dist-Build Files" --reviewer codeeshop-oc --assignee codeeshop-oc
         gh pr merge dist-files -m --auto
+        gh pr review dist-files --approve
       env:
         GH_TOKEN: ${{ github.token }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
