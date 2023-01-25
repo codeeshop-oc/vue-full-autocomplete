@@ -18,8 +18,8 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 'v14.18.1'
-        cache: 'yarn'
-    - run: yarn
+        cache: 'npm'
+    - run: npm
 
     # Commits all changed files to the repository
     - name: Config Repo
@@ -35,9 +35,9 @@ jobs:
         git checkout -b dist-files
         git stash
         git rebase main dist-files
-    - name: Yarn Building
+    - name: NPM Building
       run: |
-        yarn build
+        npm run build
     - name: Committing
       run: |
         git add .
