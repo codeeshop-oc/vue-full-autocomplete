@@ -1,6 +1,6 @@
 {
   "name": "vue-full-autocomplete",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Vue Full Autocomplete provides feature of autocomplete with GET and POST request and listing the results",
   "main": "dist/VueFullAutocomplete.ssr.js",
   "browser": "dist/VueFullAutocomplete.esm.js",
