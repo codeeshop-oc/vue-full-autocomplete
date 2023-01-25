@@ -19,7 +19,7 @@ jobs:
       with:
         node-version: 'v14.18.1'
         cache: 'npm'
-    - run: npm
+    - run: npm install
 
     # Commits all changed files to the repository
     - name: Config Repo
