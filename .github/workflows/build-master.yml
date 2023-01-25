@@ -1,0 +1,58 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: build-main
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 'v14.18.1'
+        cache: 'yarn'
+    - run: yarn
+
+    # Commits all changed files to the repository
+    - name: Config Repo
+      run: |
+        git config --global user.name "codeeshop-oc/vue-full-autocomplete"
+        git config --global user.email "github-stats[bot]@codeeshop-oc.github.io"
+    - name: Deleting Previous Branches
+      run: |
+        git branch -D dist-files || echo
+        git push -d origin dist-files || echo
+    - name: Setting Branch to dist-files
+      run: |
+        git checkout -b dist-files
+        git stash
+        git rebase main dist-files
+    - name: Yarn Building
+      run: |
+        yarn build
+    - name: Committing
+      run: |
+        git add .
+        # "echo" returns true so the build succeeds, even if no changed files
+        git commit -m 'Update Dist Files' || echo
+        git push -u origin dist-files
+        git checkout main
+    - name: Merging
+      run: |
+        gh repo set-default codeeshop-oc/vue-full-autocomplete
+        gh pr create --base main --head dist-files --title "Update Build Files" --body "Dist-Build Files" --reviewer codeeshop-oc  || echo
+        gh pr merge dist-files -m --auto || echo
+      env:
+        GH_TOKEN: ${{ github.token }}
+    - name: Deleting Previous Branches
+      run: |
+        git branch -D dist-files || echo
+        git push -d origin dist-files || echo
