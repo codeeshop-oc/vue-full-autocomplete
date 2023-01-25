@@ -2,7 +2,7 @@
 
 > Vue Full Autocomplete component for Vue.js
 
-[![npm](https://img.shields.io/badge/npm-1.0.3-blue)](https://www.npmjs.com/package/vue-full-autocomplete)
+[![npm](https://img.shields.io/badge/npm-1.0.4-blue)](https://www.npmjs.com/package/vue-full-autocomplete)
 [![license](https://img.shields.io/badge/license-MIT-green)](https://github.com/codeeshop-oc/vue-full-autocomplete/blob/main/LICENSE)
 [![bit](https://img.shields.io/badge/components-1-yellowgreen)](https://github.com/codeeshop-oc/vue-full-autocomplete/blob/main/src/VueFullAutocomplete.vue)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/codeeshop-oc/vue-full-autocomplete/issues?&q=is%3Aissue+is%3Aopen)
