@@ -20,7 +20,7 @@ env:
 
 jobs:
   job1:
-    name: Build Dist
+    name: Build Dist & Merge 
     runs-on: ubuntu-latest
     outputs:
       output1: ${{ steps.verify_diff.outputs.changed }}
