@@ -1,27 +1,30 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: build-main
-
-on:
-  push:
-    branches: [ "main" ]
-  workflow_dispatch:
+name: build-master
 
 env:
   CONFIG_USERNAME: codeeshop-oc/vue-full-autocomplete
   CONFIG_EMAIL: github-stats[bot]@codeeshop-oc.github.io
   TEMP_BRANCH_NAME: dist-files
+  MASTER_BRANCH_NAME: main
   COMMIT_MESSAGE: Update Dist Files
   PULL_TITLE: Update Dist Files
   PULL_BODY: Dist-Build Files
   ASSIGNEE: codeeshop-oc
   REVIEWER: codeeshop-oc
+  
+on:
+  push:
+    branches: [ "${{ env.MASTER_BRANCH_NAME }}" ]
+  workflow_dispatch:
+
 
 jobs:
   job1:
     runs-on: ubuntu-latest
-
+    outputs:
+      output: ${{ steps.committing.outputs }}
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js
@@ -51,25 +54,33 @@ jobs:
       run: |
         git add .
         # "echo" returns true so the build succeeds, even if no changed files
-        git commit -m ${{ env.COMMIT_MESSAGE }}
         # echo ${{ steps.committing.conclusion }}
+        git commit -m ${{ env.COMMIT_MESSAGE }} >> $GITHUB_OUTPUT
   job2:
-    needs: job2
-    - name: Nothing to Commit
-      if: ${{ success() }}
-      run: |
-        git push -u origin ${{ env.TEMP_BRANCH_NAME }}
-        git checkout main  - 
+    needs: job1
+    runs-on: ubuntu-latest
+    outputs:
+      output: ${{ steps.checkout.outputs }}
+    steps:
+      - run: echo ${{needs.job1.outputs.output}}      
+      - name: Nothing to Commit
+        if: ${{ success() }}
+        id: checkout
+        run: |
+          git push -u origin ${{ env.TEMP_BRANCH_NAME }}
+          git checkout ${{ env.MASTER_BRANCH_NAME }} >> $GITHUB_OUTPUT
   job3:
-    needs: [job1, job2]
-    - name: Merging
-      if: ${{ success() }}
-      run: |
-        gh repo set-default ${{ env.CONFIG_USERNAME }}
-        gh pr create --base main --head ${{ env.TEMP_BRANCH_NAME }} --title "${{ env.PULL_TITLE }}" --body "${{ env.PULL_BODY }}" --reviewer ${{ env.ASSIGNEE }} --assignee ${{ env.REVIEWER }}
-        gh pr merge ${{ env.TEMP_BRANCH_NAME }} -m --auto
-        gh pr review ${{ env.TEMP_BRANCH_NAME }} --approve
-      env:
-        GH_TOKEN: ${{ github.token }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+    needs: [job2]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{needs.job2.outputs.output}}
+      - name: Merging
+        if: ${{ success() }}
+        run: |
+          gh repo set-default ${{ env.CONFIG_USERNAME }}
+          gh pr create --base ${{ env.MASTER_BRANCH_NAME }} --head ${{ env.TEMP_BRANCH_NAME }} --title "${{ env.PULL_TITLE }}" --body "${{ env.PULL_BODY }}" --reviewer ${{ env.ASSIGNEE }} --assignee ${{ env.REVIEWER }}
+          gh pr merge ${{ env.TEMP_BRANCH_NAME }} -m --auto
+          gh pr review ${{ env.TEMP_BRANCH_NAME }} --approve
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
