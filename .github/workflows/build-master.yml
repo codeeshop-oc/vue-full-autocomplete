@@ -52,7 +52,7 @@ jobs:
         git add .
         # "echo" returns true so the build succeeds, even if no changed files
         echo """${{ toJSON(steps) }}"""
-        git commit -m "${{ env.COMMIT_MESSAGE }}" >> $GITHUB_OUTPUT
+        git commit -m "${{ env.COMMIT_MESSAGE }}" | echo >> $GITHUB_OUTPUT
         echo """${{ toJSON(steps.committing) }}"""        
 
     - name: Can't Commit
