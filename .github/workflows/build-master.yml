@@ -53,6 +53,10 @@ jobs:
         # "echo" returns true so the build succeeds, even if no changed files
         # echo ${{ steps.committing.conclusion }}
         git commit -m "${{ env.COMMIT_MESSAGE }}" >> $GITHUB_OUTPUT
+    - name: Can't Commit
+      if: ${{ failure() && steps.demo.conclusion == 'failure' }}
+      run: |
+        echo ${{ steps.committing.conclusion }}
   job2:
     needs: job1
     runs-on: ubuntu-latest
@@ -60,7 +64,7 @@ jobs:
       output: ${{ steps.checkout.outputs }}
     steps:
       - name: You Can Commit
-        if: contains(${{ needs.job1.outputs.output }})
+        if: contains("${{ needs.job1.outputs.output }}", 'file changed')
         id: checkout
         run: |
           git push -u origin ${{ env.TEMP_BRANCH_NAME }}
@@ -69,9 +73,8 @@ jobs:
     needs: [job2]
     runs-on: ubuntu-latest
     steps:
-      - run: echo ${{needs.job2.outputs.output}}
       - name: Merging
-        if: ${{ success() }}
+        if: contains("${{ needs.job2.outputs.output }}", 'Create a pull request for')        
         run: |
           gh repo set-default ${{ env.CONFIG_USERNAME }}
           gh pr create --base ${{ env.MASTER_BRANCH_NAME }} --head ${{ env.TEMP_BRANCH_NAME }} --title "${{ env.PULL_TITLE }}" --body "${{ env.PULL_BODY }}" --reviewer ${{ env.ASSIGNEE }} --assignee ${{ env.REVIEWER }}
