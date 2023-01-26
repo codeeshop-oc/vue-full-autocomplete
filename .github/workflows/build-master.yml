@@ -35,49 +35,42 @@ jobs:
     - name: Yarn Building
       run: |
         yarn build
-    - name: Check if there are any changes
+    - name: Check for File changes
       id: verify_diff
       run: |
         git diff --quiet . || echo "changed=true" >> $GITHUB_OUTPUT
-    - name: No Changes
+    - name: No Changes Found
       id: no_changes
       if: steps.verify_diff.outputs.changed != 'true'
       run: |
         exit 0
-  job2:
-    name: Commit & Merge
-    needs: job1
-    if: needs.job1.outputs.output1 == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deleting Previous Branches
-        run: |
-          git branch -D ${{ env.TEMP_BRANCH_NAME }} || echo
-          git push -d origin ${{ env.TEMP_BRANCH_NAME }} || echo
-      - name: Setting Branch to Temp Branch Name
-        if: steps.verify_diff.outputs.changed == 'true'
-        run: |
-          git checkout -b ${{ env.TEMP_BRANCH_NAME }}
-      # Commits all changed files to the repository
-      - name: Committing
-        run: |
-          git config --global user.name "${{ env.CONFIG_USERNAME }}"
-          git config --global user.email "${{ env.CONFIG_EMAIL }}"
+    - name: Deleting Previous Branches
+      run: |
+        git branch -D ${{ env.TEMP_BRANCH_NAME }} || echo
+        git push -d origin ${{ env.TEMP_BRANCH_NAME }} || echo
+    - name: Setting Branch to Temp Branch Name
+      run: |
+        git checkout -b ${{ env.TEMP_BRANCH_NAME }}
+    # Commits all changed files to the repository
+    - name: Committing
+      run: |
+        git config --global user.name "${{ env.CONFIG_USERNAME }}"
+        git config --global user.email "${{ env.CONFIG_EMAIL }}"
 
-          git add .
-          # "echo" returns true so the build succeeds, even if no changed files
-          git commit -m "${{ env.COMMIT_MESSAGE }}"
-      - name: Push Commit
-        id: checkout
-        run: |          
-          git push -u origin ${{ env.TEMP_BRANCH_NAME }}
-      - name: Merging
-        run: |
-          git checkout ${{ env.MASTER_BRANCH_NAME }}
-          gh repo set-default ${{ env.CONFIG_USERNAME }}
-          gh pr create --base ${{ env.MASTER_BRANCH_NAME }} --head ${{ env.TEMP_BRANCH_NAME }} --title "${{ env.PULL_TITLE }}" --body "${{ env.PULL_BODY }}" --reviewer ${{ env.ASSIGNEE }} --assignee ${{ env.REVIEWER }}
-          gh pr merge ${{ env.TEMP_BRANCH_NAME }} -m --auto
-          gh pr review ${{ env.TEMP_BRANCH_NAME }} --approve
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        git add .
+        # "echo" returns true so the build succeeds, even if no changed files
+        git commit -m "${{ env.COMMIT_MESSAGE }}"
+    - name: Push Commit
+      id: checkout
+      run: |          
+        git push -u origin ${{ env.TEMP_BRANCH_NAME }}
+    - name: Merging
+      run: |
+        git checkout ${{ env.MASTER_BRANCH_NAME }}
+        gh repo set-default ${{ env.CONFIG_USERNAME }}
+        gh pr create --base ${{ env.MASTER_BRANCH_NAME }} --head ${{ env.TEMP_BRANCH_NAME }} --title "${{ env.PULL_TITLE }}" --body "${{ env.PULL_BODY }}" --reviewer ${{ env.ASSIGNEE }} --assignee ${{ env.REVIEWER }}
+        gh pr merge ${{ env.TEMP_BRANCH_NAME }} -m --auto
+        gh pr review ${{ env.TEMP_BRANCH_NAME }} --approve
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
