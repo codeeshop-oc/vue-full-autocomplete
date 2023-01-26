@@ -39,21 +39,19 @@ jobs:
     - name: Check for File changes
       id: verify_diff
       run: |
-        git diff --quiet . || echo "changed=true" >> $GITHUB_OUTPUT
-    - name: No Changes Found
-      id: no_changes
-      if: steps.verify_diff.outputs.changed != 'true'
-      run: |
-        exit 0
+        git diff --quiet . || echo "changed=true" >> $GITHUB_OUTPUT    
     - name: Deleting Previous Branches
+      if: steps.verify_diff.outputs.changed == 'true'
       run: |
         git branch -D ${{ env.TEMP_BRANCH_NAME }} || echo
         git push -d origin ${{ env.TEMP_BRANCH_NAME }} || echo
     - name: Setting Branch to Temp Branch Name
+      if: steps.verify_diff.outputs.changed == 'true'
       run: |
         git checkout -b ${{ env.TEMP_BRANCH_NAME }}
     # Commits all changed files to the repository
     - name: Committing
+      if: steps.verify_diff.outputs.changed == 'true'
       run: |
         git config --global user.name "${{ env.CONFIG_USERNAME }}"
         git config --global user.email "${{ env.CONFIG_EMAIL }}"
@@ -62,10 +60,12 @@ jobs:
         # "echo" returns true so the build succeeds, even if no changed files
         git commit -m "${{ env.COMMIT_MESSAGE }}"
     - name: Push Commit
+      if: steps.verify_diff.outputs.changed == 'true'
       id: checkout
       run: |          
         git push -u origin ${{ env.TEMP_BRANCH_NAME }}        
     - name: Merging
+      if: steps.verify_diff.outputs.changed == 'true'
       run: |
         git checkout ${{ env.MASTER_BRANCH_NAME }}
         gh repo set-default ${{ env.CONFIG_USERNAME }}
