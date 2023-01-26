@@ -52,7 +52,7 @@ jobs:
         git add .
         # "echo" returns true so the build succeeds, even if no changed files
         # echo ${{ steps.committing.conclusion }}
-        git commit -m ${{ env.COMMIT_MESSAGE }} >> $GITHUB_OUTPUT
+        git commit -m "${{ env.COMMIT_MESSAGE }}" >> $GITHUB_OUTPUT
   job2:
     needs: job1
     runs-on: ubuntu-latest
