@@ -6,12 +6,20 @@ name: build-main
 on:
   push:
     branches: [ "main" ]
-
   workflow_dispatch:
 
-jobs:
-  build:
+env:
+  CONFIG_USERNAME: codeeshop-oc/vue-full-autocomplete
+  CONFIG_EMAIL: github-stats[bot]@codeeshop-oc.github.io
+  TEMP_BRANCH_NAME: dist-files
+  COMMIT_MESSAGE: Update Dist Files
+  PULL_TITLE: Update Dist Files
+  PULL_BODY: Dist-Build Files
+  ASSIGNEE: codeeshop-oc
+  REVIEWER: codeeshop-oc
 
+jobs:
+  job1:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,41 +30,46 @@ jobs:
         node-version: 16
         cache: 'yarn'
     - run: yarn
-
-    # Commits all changed files to the repository
+    
     - name: Config Repo
       run: |
-        git config --global user.name "codeeshop-oc/vue-full-autocomplete"
-        git config --global user.email "github-stats[bot]@codeeshop-oc.github.io"
+        git config --global user.name ${{ env.CONFIG_USERNAME }}
+        git config --global user.email ${{ env.CONFIG_EMAIL }}
     - name: Deleting Previous Branches
       run: |
-        git branch -D dist-files || echo
-        git push -d origin dist-files || echo
-    - name: Setting Branch to dist-files
+        git branch -D ${{ env.TEMP_BRANCH_NAME }} || echo
+        git push -d origin ${{ env.TEMP_BRANCH_NAME }} || echo
+    - name: Setting Branch to ${{ env.TEMP_BRANCH_NAME }}
       run: |
-        git checkout -b dist-files
-        git stash
-        git rebase main dist-files
+        git checkout -b ${{ env.TEMP_BRANCH_NAME }}      
     - name: Yarn Building
       run: |
         yarn build
+    # Commits all changed files to the repository
     - name: Committing
+      id: committing
       run: |
         git add .
         # "echo" returns true so the build succeeds, even if no changed files
-        git commit -m 'Update Dist Files' || echo
-        git push -u origin dist-files
-        git checkout main
-    - name: Merging
+        git commit -m ${{ env.COMMIT_MESSAGE }}
+        # echo ${{ steps.committing.conclusion }}
+  job2:
+    needs: job2
+    - name: Nothing to Commit
+      if: ${{ success() }}
       run: |
-        gh repo set-default codeeshop-oc/vue-full-autocomplete
-        gh pr create --base main --head dist-files --title "Update Build Files" --body "Dist-Build Files" --reviewer codeeshop-oc --assignee codeeshop-oc
-        gh pr merge dist-files -m --auto
-        gh pr review dist-files --approve
+        git push -u origin ${{ env.TEMP_BRANCH_NAME }}
+        git checkout main  - 
+  job3:
+    needs: [job1, job2]
+    - name: Merging
+      if: ${{ success() }}
+      run: |
+        gh repo set-default ${{ env.CONFIG_USERNAME }}
+        gh pr create --base main --head ${{ env.TEMP_BRANCH_NAME }} --title "${{ env.PULL_TITLE }}" --body "${{ env.PULL_BODY }}" --reviewer ${{ env.ASSIGNEE }} --assignee ${{ env.REVIEWER }}
+        gh pr merge ${{ env.TEMP_BRANCH_NAME }} -m --auto
+        gh pr review ${{ env.TEMP_BRANCH_NAME }} --approve
       env:
         GH_TOKEN: ${{ github.token }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Deleting Previous Branches
-      run: |
-        git branch -D dist-files || echo
-        git push -d origin dist-files || echo
+          
