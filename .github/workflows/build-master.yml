@@ -29,7 +29,7 @@ jobs:
       with:
         node-version: 16
         cache: 'yarn'
-    - run: yarn
+    - run: echo "yarn"
     
     - name: Config Repo
       run: |
@@ -39,7 +39,7 @@ jobs:
       run: |
         git branch -D ${{ env.TEMP_BRANCH_NAME }} || echo
         git push -d origin ${{ env.TEMP_BRANCH_NAME }} || echo
-    - name: Setting Branch to ${{ env.TEMP_BRANCH_NAME }}
+    - name: Setting Branch to Temp Branch Name
       run: |
         git checkout -b ${{ env.TEMP_BRANCH_NAME }}      
     - name: Yarn Building
