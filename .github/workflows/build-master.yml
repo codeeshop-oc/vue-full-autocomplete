@@ -53,8 +53,7 @@ jobs:
         # "echo" returns true so the build succeeds, even if no changed files
         echo ${{ steps.committing.conclusion }}
         git commit -m "${{ env.COMMIT_MESSAGE }}" >> $GITHUB_OUTPUT
-        echo ${{ steps.committing.conclusion }}
-        echo ${{ failure() }}
+        echo ${{ steps.committing.conclusion }}        
 
     - name: Can't Commit
       if: ${{ failure() && steps.demo.conclusion == 'failure' }}
