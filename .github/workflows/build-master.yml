@@ -20,6 +20,8 @@ env:
 
 jobs:
   job1:
+    permissions:
+      pull-requests: write
     name: Build Dist & Merge 
     runs-on: ubuntu-latest
     outputs:
@@ -63,7 +65,7 @@ jobs:
     - name: Push Commit
       id: checkout
       run: |          
-        git push -u origin ${{ env.TEMP_BRANCH_NAME }}
+        git push -u origin ${{ env.TEMP_BRANCH_NAME }}        
     - name: Merging
       run: |
         git checkout ${{ env.MASTER_BRANCH_NAME }}
