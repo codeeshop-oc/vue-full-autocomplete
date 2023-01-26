@@ -33,8 +33,8 @@ jobs:
     
     - name: Config Repo
       run: |
-        git config --global user.name ${{ env.CONFIG_USERNAME }}
-        git config --global user.email ${{ env.CONFIG_EMAIL }}
+        git config --global user.name "${{ env.CONFIG_USERNAME }}"
+        git config --global user.email "${{ env.CONFIG_EMAIL }}"
     - name: Deleting Previous Branches
       run: |
         git branch -D ${{ env.TEMP_BRANCH_NAME }} || echo
@@ -59,9 +59,8 @@ jobs:
     outputs:
       output: ${{ steps.checkout.outputs }}
     steps:
-      - run: echo ${{needs.job1.outputs.output}}      
-      - name: Nothing to Commit
-        if: ${{ success() }}
+      - name: You Can Commit
+        if: contains("${{ needs.job1.outputs.output }}", 'file changed')
         id: checkout
         run: |
           git push -u origin ${{ env.TEMP_BRANCH_NAME }}
@@ -70,9 +69,8 @@ jobs:
     needs: [job2]
     runs-on: ubuntu-latest
     steps:
-      - run: echo ${{needs.job2.outputs.output}}
       - name: Merging
-        if: ${{ success() }}
+        if: contains("${{ needs.job2.outputs.output }}", 'Create a pull request for')        
         run: |
           gh repo set-default ${{ env.CONFIG_USERNAME }}
           gh pr create --base ${{ env.MASTER_BRANCH_NAME }} --head ${{ env.TEMP_BRANCH_NAME }} --title "${{ env.PULL_TITLE }}" --body "${{ env.PULL_BODY }}" --reviewer ${{ env.ASSIGNEE }} --assignee ${{ env.REVIEWER }}
