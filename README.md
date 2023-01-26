@@ -6,6 +6,7 @@
 [![license](https://img.shields.io/badge/license-MIT-green)](https://github.com/codeeshop-oc/vue-full-autocomplete/blob/main/LICENSE)
 [![bit](https://img.shields.io/badge/components-1-yellowgreen)](https://github.com/codeeshop-oc/vue-full-autocomplete/blob/main/src/VueFullAutocomplete.vue)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/codeeshop-oc/vue-full-autocomplete/issues?&q=is%3Aissue+is%3Aopen)
+[![Dependent Bot](https://github.com/codeeshop-oc/vue-full-autocomplete/actions/workflows/build-master.yml/badge.svg?event=push)](https://github.com/codeeshop-oc/vue-full-autocomplete/actions/workflows/build-master.yml)
 
 Vue Full Autocomplete provides feature of autocomplete with GET and POST request and listing the results
 
