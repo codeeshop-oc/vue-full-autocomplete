@@ -1,8 +1,11 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: build-master
-
+name: build-master  
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
 env:
   CONFIG_USERNAME: codeeshop-oc/vue-full-autocomplete
   CONFIG_EMAIL: github-stats[bot]@codeeshop-oc.github.io
@@ -13,12 +16,6 @@ env:
   PULL_BODY: Dist-Build Files
   ASSIGNEE: codeeshop-oc
   REVIEWER: codeeshop-oc
-  
-on:
-  push:
-    branches: [ "${{ env.MASTER_BRANCH_NAME }}" ]
-  workflow_dispatch:
-
 
 jobs:
   job1:
