@@ -8,6 +8,7 @@
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/codeeshop-oc/vue-full-autocomplete/issues?&q=is%3Aissue+is%3Aopen)
 [![Node.js Package](https://github.com/codeeshop-oc/vue-full-autocomplete/actions/workflows/yarn-publish.yml/badge.svg?event=release)](https://github.com/codeeshop-oc/vue-full-autocomplete/actions/workflows/yarn-publish.yml)
 [![Dependent Bot](https://github.com/codeeshop-oc/vue-full-autocomplete/actions/workflows/dependent-bot.yml/badge.svg?event=push)](https://github.com/codeeshop-oc/vue-full-autocomplete/actions/workflows/dependent-bot.yml)
+[![CodeQL](https://github.com/codeeshop-oc/vue-full-autocomplete/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/codeeshop-oc/vue-full-autocomplete/actions/workflows/codeql-analysis.yml)
 
 Vue Full Autocomplete provides feature of autocomplete with GET and POST request and listing the results
 
